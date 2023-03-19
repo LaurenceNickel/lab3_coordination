@@ -66,9 +66,9 @@ public class Wolves {
     private void initWolves() {
         // You should put your own wolves in the array here!!
         Wolf[] wolvesPool = new Wolf[3];
-        wolvesPool[0] = new FollowCoordinationWolf();
-        wolvesPool[1] = new FollowCoordinationWolf();
-        wolvesPool[2] = new FollowCoordinationWolf();
+        wolvesPool[0] = new PackofWolves();
+        wolvesPool[1] = new PackofWolves();
+        wolvesPool[2] = new PackofWolves();
         /*
         wolvesPool[0] = new RandomWolf();
         wolvesPool[1] = new RandomWolf();
