@@ -36,25 +36,74 @@ public class Wolves {
         preyCol = new int[numPreys];
         wolves = new Wolf[numWolves];
 
-        for (int i = 0; i < numWolves; i++) {
-            do {
-                wolfRow[i] = r.nextInt(rows);
-                wolfCol[i] = r.nextInt(cols);
-            } while (!empty(wolfRow[i], wolfCol[i]));
-            grid[wolfRow[i]][wolfCol[i]] = i * 2 + 1;
-        }
-        for (int i = 0; i < numPreys; i++) {
+        boolean grid_predefined = true;
 
-            int preyR;
-            int preyC;
-            do {
-                preyR = r.nextInt(rows);
-                preyC = r.nextInt(cols);
-            } while (!empty(preyR, preyC)
-                    || captured(preyR, preyC));
-            preyRow[i] = preyR;
-            preyCol[i] = preyC;
-            grid[preyR][preyC] = i * 2 + 2;
+        // If the grid has been predefined, we call the appropriate method and add the wolves and prey to the grid.
+        if (grid_predefined) {
+            List<int[]> wolvesPreys = null;
+            if (numWolves == 5) {
+                if (numPreys == 15) {
+                    wolvesPreys = createGrid5W15P();
+                } else if (numPreys == 10) {
+                    wolvesPreys = createGrid5W10P();
+                } else if (numPreys == 5) {
+                    wolvesPreys = createGrid5W5P();
+                }
+            }
+            else if (numWolves == 4) {
+                if (numPreys == 15) {
+                    wolvesPreys = createGrid4W15P();
+                } else if (numPreys == 10) {
+                    wolvesPreys = createGrid4W10P();
+                } else if (numPreys == 5) {
+                    wolvesPreys = createGrid4W5P();
+                }
+            }
+            else if (numWolves == 3) {
+                if (numPreys == 15) {
+                    wolvesPreys = createGrid3W15P();
+                } else if (numPreys == 10) {
+                    wolvesPreys = createGrid3W10P();
+                } else if (numPreys == 5) {
+                    wolvesPreys = createGrid3W5P();
+                }
+            }
+            else {
+                System.out.println("Please chose the correct number of wolves and preys!");
+                System.exit(0);
+            }
+            wolfRow = wolvesPreys.get(0);
+            wolfCol = wolvesPreys.get(1);
+            preyRow = wolvesPreys.get(2);
+            preyCol = wolvesPreys.get(3);
+
+            for (int i = 0; i < numWolves; i++) {
+                grid[wolfRow[i]][wolfCol[i]] = i * 2 + 1;
+            }
+            for (int i = 0; i < numPreys; i++) {
+                grid[preyRow[i]][preyCol[i]] = i * 2 + 2;
+            }
+        } else {
+            for (int i = 0; i < numWolves; i++) {
+                do {
+                    wolfRow[i] = r.nextInt(rows);
+                    wolfCol[i] = r.nextInt(cols);
+                } while (!empty(wolfRow[i], wolfCol[i]));
+                grid[wolfRow[i]][wolfCol[i]] = i * 2 + 1;
+            }
+            for (int i = 0; i < numPreys; i++) {
+
+                int preyR;
+                int preyC;
+                do {
+                    preyR = r.nextInt(rows);
+                    preyC = r.nextInt(cols);
+                } while (!empty(preyR, preyC)
+                        || captured(preyR, preyC));
+                preyRow[i] = preyR;
+                preyCol[i] = preyC;
+                grid[preyR][preyC] = i * 2 + 2;
+            }
         }
         initWolves();
     }
@@ -65,17 +114,12 @@ public class Wolves {
 
     private void initWolves() {
         // You should put your own wolves in the array here!!
-        Wolf[] wolvesPool = new Wolf[3];
+        Wolf[] wolvesPool = new Wolf[5];
         wolvesPool[0] = new PackofWolves();
         wolvesPool[1] = new PackofWolves();
         wolvesPool[2] = new PackofWolves();
-        /*
-        wolvesPool[0] = new RandomWolf();
-        wolvesPool[1] = new RandomWolf();
-        wolvesPool[2] = new RandomWolf();
-        wolvesPool[3] = new RandomWolf();
-        wolvesPool[4] = new RandomWolf();
-        */
+        wolvesPool[3] = new PackofWolves();
+        wolvesPool[4] = new PackofWolves();
 
         // Below code will select three random wolves from the pool.
         // Make the pool as large as you want, but not < numWolves
@@ -116,10 +160,10 @@ public class Wolves {
         int[][] safetyGrid;
         if (!limitMovement) {
             // Wolves can move diagonally
-            for (int i = 0; i<numWolves; i++) {
+            for (int i = 0; i < numWolves; i++) {
                 safetyGrid = new int[grid.length][grid[0].length];
-                for (int r=0; r<grid.length; r++)
-                    for (int s=0; s<grid[0].length; s++)
+                for (int r = 0; r < grid.length; r++)
+                    for (int s = 0; s < grid[0].length; s++)
                         safetyGrid[r][s] = grid[r][s];
                 moves[i] = wolves[i].moveAll(getWolfViewW(i), getWolfViewP(i));
             }
@@ -270,4 +314,174 @@ public class Wolves {
         return preys;
     }
 
+    /**
+     * Returns the positions of the 5 wolves and 15 preys.
+     *
+     * @return The positions of the 5 wolves and 15 preys.
+     */
+    public List<int[]> createGrid5W15P() {
+        List<int[]> positions = new ArrayList<>();
+        int[] wolvesRow =  {10, 17, 24, 31, 38};
+        int[] wolvesCol = {40, 40, 40, 40, 40};
+        int[] preysRow = {10, 17, 24, 31, 38, 10, 17, 24, 31, 38, 10, 17, 24, 31, 38};
+        int[] preysCol = {16, 16, 16, 16, 16, 20, 20, 20, 20, 20, 24, 24, 24, 24, 24};
+        positions.add(wolvesRow);
+        positions.add(wolvesCol);
+        positions.add(preysRow);
+        positions.add(preysCol);
+
+        return positions;
+    }
+
+    /**
+     * Returns the positions of the 4 wolves and 15 preys.
+     *
+     * @return The positions of the 4 wolves and 15 preys.
+     */
+    public List<int[]> createGrid4W15P() {
+        List<int[]> positions = new ArrayList<>();
+        int[] wolvesRow =  {10, 17, 24, 31};
+        int[] wolvesCol = {40, 40, 40, 40};
+        int[] preysRow = {10, 17, 24, 31, 38, 10, 17, 24, 31, 38, 10, 17, 24, 31, 38};
+        int[] preysCol = {16, 16, 16, 16, 16, 20, 20, 20, 20, 20, 24, 24, 24, 24, 24};
+        positions.add(wolvesRow);
+        positions.add(wolvesCol);
+        positions.add(preysRow);
+        positions.add(preysCol);
+
+        return positions;
+    }
+
+    /**
+     * Returns the positions of the 3 wolves and 15 preys.
+     *
+     * @return The positions of the 3 wolves and 15 preys.
+     */
+    public List<int[]> createGrid3W15P() {
+        List<int[]> positions = new ArrayList<>();
+        int[] wolvesRow =  {17, 24, 31};
+        int[] wolvesCol = {40, 40, 40};
+        int[] preysRow = {10, 17, 24, 31, 38, 10, 17, 24, 31, 38, 10, 17, 24, 31, 38};
+        int[] preysCol = {16, 16, 16, 16, 16, 20, 20, 20, 20, 20, 24, 24, 24, 24, 24};
+        positions.add(wolvesRow);
+        positions.add(wolvesCol);
+        positions.add(preysRow);
+        positions.add(preysCol);
+
+        return positions;
+    }
+
+    /**
+     * Returns the positions of the 5 wolves and 10 preys.
+     *
+     * @return The positions of the 5 wolves and 10 preys.
+     */
+    public List<int[]> createGrid5W10P() {
+        List<int[]> positions = new ArrayList<>();
+        int[] wolvesRow =  {10, 17, 24, 31, 38};
+        int[] wolvesCol = {40, 40, 40, 40, 40};
+        int[] preysRow = {24, 31, 38, 10, 17, 24, 31, 38, 10, 17};
+        int[] preysCol = {16, 16, 16, 20, 20, 20, 20, 20, 24, 24};
+        positions.add(wolvesRow);
+        positions.add(wolvesCol);
+        positions.add(preysRow);
+        positions.add(preysCol);
+
+        return positions;
+    }
+
+    /**
+     * Returns the positions of the 4 wolves and 10 preys.
+     *
+     * @return The positions of the 4 wolves and 10 preys.
+     */
+    public List<int[]> createGrid4W10P() {
+        List<int[]> positions = new ArrayList<>();
+        int[] wolvesRow =  {10, 17, 24, 31};
+        int[] wolvesCol = {40, 40, 40, 40};
+        int[] preysRow = {24, 31, 38, 10, 17, 24, 31, 38, 10, 17};
+        int[] preysCol = {16, 16, 16, 20, 20, 20, 20, 20, 24, 24};
+        positions.add(wolvesRow);
+        positions.add(wolvesCol);
+        positions.add(preysRow);
+        positions.add(preysCol);
+
+        return positions;
+    }
+
+    /**
+     * Returns the positions of the 3 wolves and 10 preys.
+     *
+     * @return The positions of the 3 wolves and 10 preys.
+     */
+    public List<int[]> createGrid3W10P() {
+        List<int[]> positions = new ArrayList<>();
+        int[] wolvesRow =  {17, 24, 31};
+        int[] wolvesCol = {40, 40, 40};
+        int[] preysRow = {24, 31, 38, 10, 17, 24, 31, 38, 10, 17};
+        int[] preysCol = {16, 16, 16, 20, 20, 20, 20, 20, 24, 24};
+        positions.add(wolvesRow);
+        positions.add(wolvesCol);
+        positions.add(preysRow);
+        positions.add(preysCol);
+
+        return positions;
+    }
+
+    /**
+     * Returns the positions of the 5 wolves and 5 preys.
+     *
+     * @return The positions of the 5 wolves and 5 preys.
+     */
+    public List<int[]> createGrid5W5P() {
+        List<int[]> positions = new ArrayList<>();
+        int[] wolvesRow =  {10, 17, 24, 31, 38};
+        int[] wolvesCol = {40, 40, 40, 40, 40};
+        int[] preysRow = {10, 17, 24, 31, 38};
+        int[] preysCol = {20, 20, 20, 20, 20};
+        positions.add(wolvesRow);
+        positions.add(wolvesCol);
+        positions.add(preysRow);
+        positions.add(preysCol);
+
+        return positions;
+    }
+
+    /**
+     * Returns the positions of the 4 wolves and 5 preys.
+     *
+     * @return The positions of the 4 wolves and 5 preys.
+     */
+    public List<int[]> createGrid4W5P() {
+        List<int[]> positions = new ArrayList<>();
+        int[] wolvesRow =  {10, 17, 24, 31};
+        int[] wolvesCol = {40, 40, 40, 40};
+        int[] preysRow = {10, 17, 24, 31, 38};
+        int[] preysCol = {20, 20, 20, 20, 20};
+        positions.add(wolvesRow);
+        positions.add(wolvesCol);
+        positions.add(preysRow);
+        positions.add(preysCol);
+
+        return positions;
+    }
+
+    /**
+     * Returns the positions of the 3 wolves and 5 preys.
+     *
+     * @return The positions of the 3 wolves and 5 preys.
+     */
+    public List<int[]> createGrid3W5P() {
+        List<int[]> positions = new ArrayList<>();
+        int[] wolvesRow =  {17, 24, 31};
+        int[] wolvesCol = {40, 40, 40};
+        int[] preysRow = {10, 17, 24, 31, 38};
+        int[] preysCol = {20, 20, 20, 20, 20};
+        positions.add(wolvesRow);
+        positions.add(wolvesCol);
+        positions.add(preysRow);
+        positions.add(preysCol);
+
+        return positions;
+    }
 }
