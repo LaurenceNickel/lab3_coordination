@@ -10,7 +10,7 @@ import java.lang.Math.*;
 public class PackofWolves implements Wolf {
 
     // The distance where wolves that have a smaller distance are defined as close.
-    private static final int CLOSENESS_RANGE = 5;
+    private static final int CLOSENESS_RANGE = 15;
 
     @Override
     /**
@@ -31,32 +31,56 @@ public class PackofWolves implements Wolf {
         // If the 'preySight' list is not empty meaning there is at least one prey in the wolf its vision, it will
         // follow it.
         if(!preysSight.isEmpty()) {
-            int minimumDistance = Integer.MAX_VALUE;
-            int[] closestPrey = preysSight.get(0);
+            // Checking whether one of the preys that is in the vision of the current wolf is also in the vision of any
+            // of the other wolves.
+            int[] wolfFollowingPrey = preyWithinSightOfWolves(wolvesSight, preysSight);
 
-            // Looping over all the preys to find the prey that is closest to the wolf.
-            for (int[] prey : preysSight) {
-                int distance = Math.abs(prey[0]) + Math.abs(prey[1]);
-                if (distance < minimumDistance) {
-                    minimumDistance = distance;
-                    closestPrey = prey;
+            // If there is no prey present in the current wolf its vision that is also present in the vision of any of
+            // the other wolves, the wolf moves to the closest prey.
+            if(wolfFollowingPrey == null) {
+                int minimumDistance = Integer.MAX_VALUE;
+                int[] closestPrey = preysSight.get(0);
+
+                // Looping over all the preys to find the prey that is closest to the wolf.
+                for (int[] prey : preysSight) {
+                    int distance = Math.abs(prey[0]) + Math.abs(prey[1]);
+                    if (distance < minimumDistance) {
+                        minimumDistance = distance;
+                        closestPrey = prey;
+                    }
                 }
-            }
 
-            // When this closest prey is found, the next move of the wolf is defined such that it moves towards the
-            // prey.
-            // Defining the next move with respect to the x-direction.
-            if (closestPrey[0] < 0) {
-                mymove[0] = 1;
-            } else if (closestPrey[0] > 0) {
-                mymove[0] = -1;
-            }
+                // When this closest prey is found, the next move of the wolf is defined such that it moves towards the
+                // prey.
+                // Defining the next move with respect to the x-direction.
+                if (closestPrey[0] < 0) {
+                    mymove[0] = 1;
+                } else if (closestPrey[0] > 0) {
+                    mymove[0] = -1;
+                }
 
-            // Defining the next move with respect to the y-direction.
-            if (closestPrey[1] < 0) {
-                mymove[1] = 1;
-            } else if (closestPrey[1] > 0) {
-                mymove[1] = -1;
+                // Defining the next move with respect to the y-direction.
+                if (closestPrey[1] < 0) {
+                    mymove[1] = 1;
+                } else if (closestPrey[1] > 0) {
+                    mymove[1] = -1;
+                }
+            // Else if there is a prey present in the current wolf its vision that is also present in the vision of any
+            // other wolves, the wolf moves to this prey.
+            } else {
+                // Defining the next move with respect to the x-direction.
+                if (wolfFollowingPrey[0] < 0) {
+                    mymove[0] = 1;
+                } else if (wolfFollowingPrey[0] > 0) {
+                    mymove[0] = -1;
+                }
+
+                // Defining the next move with respect to the y-direction.
+                if (wolfFollowingPrey[1] < 0) {
+                    mymove[1] = 1;
+                } else if (wolfFollowingPrey[1] > 0) {
+                    mymove[1] = -1;
+                }
             }
 
         // Else if there is no prey within the wolf its vision, it will move towards the other wolves.
@@ -96,6 +120,39 @@ public class PackofWolves implements Wolf {
 
         return mymove;
 	}
+
+    /**
+     * Returns the prey present in the 'preysSight' list that is also present in the vision of another wolf from the
+     * 'wolvesSight' list.
+     *
+     * @param wolvesSight The list of distances in x and y direction from the current wolf to all the other wolves.
+     * @param preysSight The list of distances in x and y direction from the current wolf to the preys that are present
+     *                  within its visibility area.
+     * @return The prey present in the 'preysSight' list that is also present in the vision of another wolf from the
+     *         'wolvesSight' list.
+     */
+    public int[] preyWithinSightOfWolves(List<int[]> wolvesSight, List<int[]> preysSight) {
+        int visibilityRange = 5;
+        int[] wolfClosestToPrey = null;
+        double minimumDistance = Double.POSITIVE_INFINITY;
+
+        // Looping over ever prey and wolf combination.
+        for (int[] prey : preysSight) {
+            for (int[] wolf : wolvesSight) {
+                // Since the current wolf is also present in the 'wolvesSight' list, this one is skipped.
+                if (wolf[0] != 0 && wolf[1] != 0) {
+                    // Calculating the distance and checking whether it is the smallest distance found so far.
+                    double distance = Math.sqrt(Math.pow(prey[0]-wolf[0], 2) + Math.pow(prey[1]-wolf[1], 2));
+                    if (distance <= visibilityRange && (wolfClosestToPrey == null || distance < minimumDistance)) {
+                        wolfClosestToPrey = wolf;
+                        minimumDistance = distance;
+                    }
+                }
+            }
+        }
+
+        return wolfClosestToPrey;
+    }
 
     /**
      * Checking whether the current wolf is already close (within some predefined range) to any of the other wolves.

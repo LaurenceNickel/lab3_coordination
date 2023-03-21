@@ -10,18 +10,18 @@ import javax.swing.JToggleButton;
 
 @SuppressWarnings("serial")
 public class WolvesApp extends JFrame {
-		
+
 	private Wolves game;
 	private JPanel control;
 	private boolean paused = true;
 
 	public WolvesApp(String title, int numbrows, int numbcols, int squaresize) {
-		
+
 		// init window
 		super(title);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
-		
+
 		// set window location to center of screen
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		int left = (screenSize.width - numbcols*squaresize)/ 2;
@@ -29,11 +29,11 @@ public class WolvesApp extends JFrame {
 		setLocation(left, top);
 
 		//Wolves(numbrows, numbcols, numbWolves, numbPrey, visibilityRangePrey, minCapturedToEndGame(leave at 1), numberOfWolvesNeededToCaptureAPrey)
-		game = new Wolves(numbrows, numbcols,4,10,5,3, 2);
-		
+		game = new Wolves(numbrows, numbcols,5,15,5,1, 2);
+
 		WolvesUI panel = new WolvesUI(game,squaresize);
 		add(panel, BorderLayout.CENTER);
-		
+
 		control = new JPanel();
 		final JToggleButton pauseButton = new javax.swing.JToggleButton("Start");
 		pauseButton.addMouseListener(new MouseListener() {
@@ -49,10 +49,10 @@ public class WolvesApp extends JFrame {
 			public void mouseExited(MouseEvent e) {}
 			public void mouseEntered(MouseEvent e) {}
 			public void mouseClicked(MouseEvent e) {}
-			});
+		});
 		control.add(pauseButton);
 		add(control, BorderLayout.NORTH);
-		
+
 		pack();
 		this.setVisible(true);
 	}
@@ -73,12 +73,12 @@ public class WolvesApp extends JFrame {
 
 
 	public static void main(String[] args) {
-		
+
 		int width = 50;
 		int height = 50;
 		int squaresize = 15;
 		int delay = 100;
-		
+
 		//Parameters
 		try {
 			for (int tmp = 0 ; tmp < args.length ; tmp++) {
@@ -97,7 +97,7 @@ public class WolvesApp extends JFrame {
 			if ((39 >= height) || (height >= 501)) throw new Exception();
 			if ((1 >= squaresize) || (Math.max(width,height)*squaresize >= 1001)) throw new Exception();
 			if (49 >= delay) throw new Exception();
-		}	
+		}
 		catch(Exception e) {
 			//e.printStackTrace();
 			System.err.println("");
@@ -112,7 +112,7 @@ public class WolvesApp extends JFrame {
 			System.err.println("");
 			System.exit(-1);
 		}
-		
+
 		WolvesApp wol = new WolvesApp("Hungry Hungry Wolves", height, width, squaresize);
 		wol.runGoL(delay);
 	}
